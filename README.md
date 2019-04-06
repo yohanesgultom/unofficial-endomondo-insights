@@ -7,6 +7,10 @@ Unofficial Endomondo web-based personal running insights based on awesome [endom
 
 ## Setup
 
+Prerequisites:
+
+1. NodeJS >= 8.x
+
 Setup steps:
 
 1. Clone this repo
