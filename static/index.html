@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="favicon.png" />
+    <title>Endomondo Running Insights</title>    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" crossorigin="anonymous">
+<style>
+body {
+  font-size: .875rem;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #999;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+  padding-top: 133px; /* Space for fixed navbar */
+}
+
+@media (min-width: 768px) {
+  [role="main"] {
+    padding-top: 48px; /* Space for fixed navbar */
+  }
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+</style>
+</head>
+<body>    
+
+    <!-- header-->
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+          <img src="favicon.png" height="28">
+          Running Insights
+        </a>
+    </nav>
+          
+    <div class="container-fluid">
+        <div class="row">
+            
+            <!-- sidebar-->
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#pace">
+                            <span class="oi oi-bolt"></span>
+                            Pace<span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#vo2max">
+                            <span class="oi oi-fire"></span>
+                            VO<sub>2</sub> Max
+                        </a>
+                    </li>
+                    </ul>
+                </div>
+            </nav>
+        
+            <!-- content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div id="pace" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                  <h1 class="h2">Pace</h1>                  
+                </div>            
+                <canvas class="my-4 w-100" id="pace-chart" width="900" height="380"></canvas>
+
+                <div id="vo2max" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                  <h1 class="h2">VO<sub>2</sub> Max</h1>                  
+                </div>            
+                <p>VO<sub>2</sub> Max is calculated based on time required to achieve first 1.6 Km (1 mile), heart rate at that time and body weight using formula from <a href="http://runels.com/VO2%20max/calculating_vo2.htm">http://runels.com/VO2%20max/calculating_vo2.htm</a>.</p>
+                <canvas class="my-4 w-100" id="vo2max-chart" width="900" height="380"></canvas>
+            </main>
+
+        </div>
+
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script>
+var paceChartCtx = document.getElementById('pace-chart').getContext('2d')
+var paceChart = new Chart(paceChartCtx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Pace (Min/Km)',
+            data: [],
+            backgroundColor: 'rgba(197, 208, 249, 0.2)',
+            borderColor: 'rgb(49, 79, 188)',
+            borderWidth: 1
+          },
+          {
+            label: 'Distance (Km)',
+            data: [],
+            backgroundColor: 'rgba(249, 177, 199, 0.2)',
+            borderColor: 'rgb(232, 18, 82)',
+            borderWidth: 1
+          },
+        ]
+    },
+    options: {
+      animation: {easing: 'linear'},
+      scales: {
+        xAxes: [{
+          ticks: {
+              display: false
+          }
+        }]            
+      }
+    },
+});
+
+var vo2maxChartCtx = document.getElementById('vo2max-chart').getContext('2d')
+var vo2maxChart = new Chart(vo2maxChartCtx, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'VO2 Max',
+            data: [],
+            backgroundColor: 'rgba(197, 208, 249, 1.0)',
+            borderColor: 'rgb(49, 79, 188)',
+            borderWidth: 1
+          },
+        ]
+    },
+    options: {
+      animation: {easing: 'linear'},
+      scales: {
+        // yAxes: [{
+        //     ticks: {
+        //         beginAtZero: true
+        //     }
+        // }],
+        xAxes: [{
+            ticks: {
+                display: false
+            }
+        }]            
+      }
+    },    
+});
+
+fetch('/workouts', {
+	method: 'get'
+})
+.then((res) => {  
+  return res.json()
+})
+.then((data) => {  
+  if (!data.workouts) {
+    alert('No data found. Please check README on how to download workouts data')
+    return false
+  }
+
+  let labels = []
+  let paces = []
+  let distances = []
+  
+  let vo2maxes = []
+  let vo2maxesLabels = []
+  let c = (data.gender == 'F') ? 100.5 : 108.844
+  data.workouts.map((w) => {
+      let d = new Date(w.start_time)
+      let pace = 60.0 / w.speed_kmh_avg
+      let label = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`          
+      
+      // filters anomalies
+      if (pace <= 100 && d.getFullYear() >= 2018) {
+          labels.unshift(label)
+          paces.unshift(pace)
+          distances.unshift(w.distance_km)
+      }
+
+      // find duration and heart rate at first 1.6 km (1 mile)
+      let t1 = Date.parse(w.points[0].time)
+      let t2 = t1
+      let heartRate = null
+      for (let i = 0; i < w.points.length; i++) {
+        let p = w.points[i]
+        if (p.dist >= 1.6) {
+          t2 = Date.parse(p.time)
+          heartRate = p.hr
+          break
+        }
+      }
+      let duration = (t2 - t1) / 60000 // miliseconds to minutes        
+
+      // filters workout without heart rate detection
+      if (duration > 1 && heartRate) {
+        // From http://runels.com/VO2%20max/calculating_vo2.htm                
+        let vo2max = c - (0.1636 * data.weight) - (1.438 * duration) - (0.1928 * heartRate)
+        vo2maxesLabels.unshift(label)
+        vo2maxes.unshift(vo2max)
+      }
+  })
+  paceChart.data.labels = labels
+  paceChart.data.datasets[0].data = paces
+  paceChart.data.datasets[1].data = distances    
+  paceChart.update()
+
+  vo2maxChart.data.labels = vo2maxesLabels
+  vo2maxChart.data.datasets[0].data = vo2maxes
+  vo2maxChart.update()
+})
+.catch(function(err) {  
+  console.error(err)
+  alert(err)
+})
+</script>
+</body>
+</html>

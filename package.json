@@ -1,0 +1,50 @@
+{
+  "name": "endomondo-unofficial-api",
+  "version": "1.0.26",
+  "description": "endomondo unofficial api access",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "download": "node download.js",
+    "test": "jest",
+    "test:dev": "jest --watchAll test/unit",
+    "test:int": "jest test/integration",
+    "test:cov": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "keywords": [
+    "endomondo",
+    "sports",
+    "unofficial",
+    "api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanekotic/endomondo-unofficial-api.git"
+  },
+  "author": "kanekotic",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kanekotic/endomondo-unofficial-api/issues"
+  },
+  "homepage": "https://github.com/kanekotic/endomondo-unofficial-api#readme",
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "moment": "2.24.0",
+    "request-promise-native": "1.0.5",
+    "uuid": "3.3.2"
+  },
+  "devDependencies": {
+    "coveralls": "3.0.2",
+    "faker": "4.1.0",
+    "jest": "24.0.0"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*-test.js"
+    ],
+    "testEnvironment": "node",
+    "automock": false
+  }
+}
