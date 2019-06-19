@@ -53,8 +53,7 @@ const download = async (params, baseDir) => {
         } else {
             console.log('No workouts data found')
         }
-    
-
+        
         // load details
         console.log('Fetching more details..')
         for (let i = 0; i < data.workouts.length; i++) {

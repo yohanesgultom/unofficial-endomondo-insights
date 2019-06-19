@@ -23,11 +23,7 @@ parser.addArgument('password', {help: 'Endomondo account password'})
 parser.addArgument(['-a', '--after'], {required: true, type: dateParser, metavar: 'first_date', help: 'First workout date (YYYY-MM-DD)'})
 parser.addArgument(['-g', '--gender'], {required: true, choices: ['M', 'F'], help: 'Gender to calculate value such as VO2 Max'})
 parser.addArgument(['-w', '--weight'], {required: true, type: parseInt, help: 'Body weight (Kg) to calculate value such as VO2 Max'})
+parser.addArgument(['-f', '--fileName'], {required: false, help: 'Existing user workouts JSON file'})
 let args = parser.parseArgs()
 
-endomondo.download({
-    email: args.email,
-    password: args.password,
-    after: args.after,
-    fileName: args.fileName, 
-}, path.join(__dirname, 'data'))
+endomondo.download(args, path.join(__dirname, 'data'))
